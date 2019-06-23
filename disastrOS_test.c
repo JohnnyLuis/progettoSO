@@ -45,6 +45,11 @@ void initFunction(void* args) {
     printf("opening resource (and creating if necessary)\n");
     int fd=disastrOS_openResource(i,type,mode);
     printf("fd=%d\n", fd);
+	
+	printf("opening semaphore (and creating if necessary)\n");
+	int sem_fd=disastrOS_semOpen(i,1,mode);
+    printf("sem_fd=%d\n\n", sem_fd);
+	
     disastrOS_spawn(childFunction, 0);
     alive_children++;
   }

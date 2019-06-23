@@ -308,6 +308,9 @@ int disastrOS_destroyResource(int resource_id) {
   return disastrOS_syscall(DSOS_CALL_DESTROY_RESOURCE, resource_id);
 }
 
+int disastrOS_semOpen(int sem_id, int sem_count, int open_mode) {
+	return disastrOS_syscall(DSOS_CALL_SEMOPEN, sem_id, sem_count, open_mode);
+}
 
 
 void disastrOS_printStatus(){
