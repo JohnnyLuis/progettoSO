@@ -312,6 +312,14 @@ int disastrOS_semOpen(int sem_id, int sem_count, int open_mode) {
 	return disastrOS_syscall(DSOS_CALL_SEMOPEN, sem_id, sem_count, open_mode);
 }
 
+int disastrOS_semWait(int sem_id) {
+	return disastrOS_syscall(DSOS_CALL_SEMWAIT, sem_id);
+}
+
+int disastrOS_semPost(int sem_id) {
+	return disastrOS_syscall(DSOS_CALL_SEMPOST, sem_id);
+}
+
 
 void disastrOS_printStatus(){
   printf("****************** DisastrOS ******************\n");
