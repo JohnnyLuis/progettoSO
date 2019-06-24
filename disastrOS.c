@@ -312,12 +312,16 @@ int disastrOS_semOpen(int sem_id, int sem_count, int open_mode) {
 	return disastrOS_syscall(DSOS_CALL_SEMOPEN, sem_id, sem_count, open_mode);
 }
 
-int disastrOS_semWait(int sem_id) {
-	return disastrOS_syscall(DSOS_CALL_SEMWAIT, sem_id);
+int disastrOS_semWait(int sem_fd) {
+	return disastrOS_syscall(DSOS_CALL_SEMWAIT, sem_fd);
 }
 
-int disastrOS_semPost(int sem_id) {
-	return disastrOS_syscall(DSOS_CALL_SEMPOST, sem_id);
+int disastrOS_semPost(int sem_fd) {
+	return disastrOS_syscall(DSOS_CALL_SEMPOST, sem_fd);
+}
+
+int disastrOS_semClose(int sem_fd) {
+	return disastrOS_syscall(DSOS_CALL_SEMCLOSE, sem_fd);
 }
 
 
