@@ -51,7 +51,7 @@ void internal_semOpen(){
   SemDescriptor* des=SemDescriptor_alloc(running->last_sem_fd, res, running);
   running->last_sem_fd++;
   SemDescriptorPtr* desptr=SemDescriptorPtr_alloc(des);
-  List_insert(&running->descriptors, running->descriptors.last, (ListItem*) des);
+  List_insert(&running->sem_descriptors, running->descriptors.last, (ListItem*) des);
 
   des->ptr=desptr;
   List_insert(&res->descriptors, res->descriptors.last, (ListItem*) desptr);
