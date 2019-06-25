@@ -16,10 +16,24 @@ void sleeperFunction(void* args){
 void childFunction(void* args){
   printf("Hello, I am the child function %d\n",disastrOS_getpid());
   printf("I will iterate a bit, before terminating\n");
+  int sem_fd;
   int type=0;
   int mode=0;
   int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
   printf("fd=%d\n", fd);
+  
+  if (disastrOS_getpid() % 2) {
+    mode = DSOS_CREATE;
+    sem_fd = disastrOS_semOpen(disastrOS_getpid(),1,mode);
+  }
+  else {
+    sem_fd = disastrOS_semOpen(disastrOS_getpid(),1,mode);
+    disastrOS_semWait(sem_fd);
+    disastrOS_semPost(sem_fd);
+  }
+  
+  disastrOS_semClose(sem_fd);
+  
   printf("PID: %d, terminating\n", disastrOS_getpid());
 
   for (int i=0; i<(disastrOS_getpid()+1); ++i){
@@ -46,8 +60,8 @@ void initFunction(void* args) {
     int fd=disastrOS_openResource(i,type,mode);
     printf("fd=%d\n", fd);
 	
-	printf("opening semaphore (and creating if necessary)\n");
-	int sem_fd=disastrOS_semOpen(i,1,mode);
+	  printf("opening semaphore (and creating if necessary)\n");
+	  int sem_fd=disastrOS_semOpen(i,1,mode);
     printf("sem_fd=%d\n\n", sem_fd);
 	
     disastrOS_spawn(childFunction, 0);
