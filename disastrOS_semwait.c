@@ -30,5 +30,5 @@ void internal_semWait(){
   }
   
   running->syscall_retvalue = 0;
-  disastrOS_debug("[SEMWAIT] semwait successfully completed. current count for sem_id=%d is %d",semDes->semaphore.id,semDes->semaphore.count);
+  disastrOS_debug("[SEMWAIT] semwait successfully completed. current count for sem_id=%d is %d",semDes->semaphore->id,semDes->semaphore->count);
 }

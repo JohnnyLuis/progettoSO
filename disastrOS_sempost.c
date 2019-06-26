@@ -29,5 +29,5 @@ void internal_semPost(){
 	}
 	
 	running->syscall_retvalue = -1;
-	disastrOS_debug("[SEMPOST] sempost successfully completed. current count for sem_id=%d is %d",semDes->semaphore.id,semDes->semaphore.count);
+	disastrOS_debug("[SEMPOST] sempost successfully completed. current count for sem_id=%d is %d",semDes->semaphore->id,semDes->semaphore->count);
 }
