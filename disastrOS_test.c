@@ -2,7 +2,11 @@
 #include <unistd.h>
 #include <poll.h>
 
+
+
 #include "disastrOS.h"
+
+
 
 // we need this to handle the sleep state
 void sleeperFunction(void* args){
@@ -25,6 +29,12 @@ void childFunction(void* args){
   if (disastrOS_getpid() % 2) {
     mode = DSOS_CREATE;
     sem_fd = disastrOS_semOpen(disastrOS_getpid(),1,mode);
+    if (disastrOS_getpid() == 5 || disastrOS_getpid() == 7) {
+      sem_fd = disastrOS_semOpen(6,1,0);
+      disastrOS_semWait(sem_fd);
+      disastrOS_sleep(4);
+      disastrOS_semPost(sem_fd);
+    }
   }
   else {
     sem_fd = disastrOS_semOpen(disastrOS_getpid(),1,mode);
@@ -67,6 +77,10 @@ void initFunction(void* args) {
     disastrOS_spawn(childFunction, 0);
     alive_children++;
   }
+  
+  printf("opening semaphore\n");
+	int sem_fd=disastrOS_semOpen(50,1,0);
+  printf("sem_fd=%d\n\n", sem_fd);
 
   disastrOS_printStatus();
   int retval;
