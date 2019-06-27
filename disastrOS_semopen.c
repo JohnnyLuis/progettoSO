@@ -13,7 +13,7 @@ void internal_semOpen(){
   
   //id must be >=0
   if (id < 0) {
-    disastrOS_debug("[SEMOPEN] id not valid");
+    disastrOS_debug("[SEMOPEN] id not valid\n");
 	  running->syscall_retvalue = -1;
 	  return;
   }
@@ -21,14 +21,14 @@ void internal_semOpen(){
   //when a process opens a new semaphore, it will be always created a new sem_descriptor: 
   //number of sem_descriptors per process must no exceed !
   if ((running->sem_descriptors.size)+1 > MAX_NUM_SEMDESCRIPTORS_PER_PROCESS) {
-    disastrOS_debug("[SEMOPEN] MAX_NUM_SEMDESCRIPTORS_PER_PROCESS reached");
+    disastrOS_debug("[SEMOPEN] MAX_NUM_SEMDESCRIPTORS_PER_PROCESS reached\n");
 	  running->syscall_retvalue = -1;
 	  return;
   }
   
   //if a new semaphore is to be created, then the total number of exiting semaphores in the system must no exceed !
   if ((mode && DSOS_CREATE) && ((semaphores_list.size)+1 > MAX_NUM_SEMAPHORES)) {
-    disastrOS_debug("[SEMOPEN] MAX_NUM_SEMAPHORES reached");
+    disastrOS_debug("[SEMOPEN] MAX_NUM_SEMAPHORES reached\n");
 	  running->syscall_retvalue = -1;
 	  return;
   }
@@ -39,31 +39,31 @@ void internal_semOpen(){
   Semaphore* res=SemaphoreList_byId(&semaphores_list, id);
   if (mode && DSOS_CREATE) {
 	if (res) {
-    disastrOS_debug("[SEMOPEN] semaphore with id=%d already exists. you can open it by using mode=0",id);
+    disastrOS_debug("[SEMOPEN] semaphore with id=%d already exists. you can open it by using mode=0\n",id);
 		running->syscall_retvalue = -1;
 		return;
 	}
 	res = Semaphore_alloc(id,count);
   
 	List_insert(&semaphores_list,semaphores_list.last,(ListItem*)res);
-  disastrOS_debug("[SEMOPEN] semaphore with id=%d successfully created");
+  disastrOS_debug("[SEMOPEN] semaphore with id=%d successfully created\n",id);
   }
   else if (!res) {
-    disastrOS_debug("[SEMOPEN] semaphore with id=%d doesn't exists. you must create it before by using mode=DSOS_CREATE",id);
+    disastrOS_debug("[SEMOPEN] semaphore with id=%d doesn't exists. you must create it before by using mode=DSOS_CREATE\n",id);
 	  running->syscall_retvalue = -1;
 	  return;
   }
-
+  
   //create a descriptor for the new opened semaphore
   SemDescriptor* des=SemDescriptor_alloc(running->last_sem_fd, res, running);
   running->last_sem_fd++;
   SemDescriptorPtr* desptr=SemDescriptorPtr_alloc(des);
-  List_insert(&running->sem_descriptors, running->descriptors.last, (ListItem*) des);
+  List_insert(&running->sem_descriptors, running->sem_descriptors.last, (ListItem*) des);
 
   des->ptr=desptr;
   List_insert(&res->descriptors, res->descriptors.last, (ListItem*) desptr);
 
   //return the sem_fd
   running->syscall_retvalue = des->fd;
-  disastrOS_debug("[SEMOPEN] semaphore with id=%d successfully opened",id);
+  disastrOS_debug("[SEMOPEN] semaphore with id=%d successfully opened\n",id);
 }

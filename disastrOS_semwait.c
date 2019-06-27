@@ -12,6 +12,7 @@ void internal_semWait(){
   SemDescriptor* semDes = SemDescriptorList_byFd(&running->sem_descriptors,sem_fd);
   
   if (!semDes) {
+    disastrOS_debug("[SEMWAIT] descriptor not found in this process\n");
 	  running->syscall_retvalue = -1;
 	  return;
   }
@@ -21,14 +22,14 @@ void internal_semWait(){
   (sem->count)--;
   
   if (sem->count < 0) {
-    disastrOS_debug("[SEMWAIT] current running process sets to waiting");
+    disastrOS_debug("[SEMWAIT] current running process sets to waiting\n");
 	  running->status = Waiting;
-	  List_insert(&waiting_list, waiting_list.last, (ListItem*)running);
-	  List_insert(&(sem->waiting_descriptors), sem->waiting_descriptors.last, (ListItem*)semDes->ptr);
-	  
-	  running = (PCB*) List_detach(&ready_list,ready_list.first);
+    List_insert(&waiting_list, waiting_list.last, (ListItem*)running); 
+    SemDescriptorPtr* semDesPtr = (SemDescriptorPtr*)List_detach(&(sem->descriptors),(ListItem*)semDes->ptr); 
+    List_insert(&(sem->waiting_descriptors), sem->waiting_descriptors.last, (ListItem*)semDesPtr));
+    running = (PCB*) List_detach(&ready_list,ready_list.first);
   }
   
   running->syscall_retvalue = 0;
-  disastrOS_debug("[SEMWAIT] semwait successfully completed. current count for sem_id=%d is %d",semDes->semaphore->id,semDes->semaphore->count);
+  disastrOS_debug("[SEMWAIT] semwait successfully completed. current count for sem_id=%d is %d\n",semDes->semaphore->id,semDes->semaphore->count);
 }

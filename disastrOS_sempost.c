@@ -12,6 +12,7 @@ void internal_semPost(){
 	 SemDescriptor* semDes = SemDescriptorList_byFd(&running->sem_descriptors,sem_fd);
   
 	if (!semDes) {
+		disastrOS_debug("[SEMPOST] descriptor not found in this process\n");
 		running->syscall_retvalue = -1;
 		return;
 	}
@@ -20,8 +21,10 @@ void internal_semPost(){
 	
 	(sem->count)++;
 	
-	if (sem->count > 0 && sem->waiting_descriptors.size) {
-		SemDescriptorPtr* semDesPtr = (SemDescriptorPtr*) List_detach(&sem->waiting_descriptors, sem->waiting_descriptors.first);
+	if (sem->count <= 0) {
+		SemDescriptorPtrList_print(&sem->waiting_descriptors);
+		SemDescriptorPtr* semDesPtr = (SemDescriptorPtr*) List_detach(&(sem->waiting_descriptors), (ListItem*)sem->waiting_descriptors.first);
+		List_insert(&(sem->descriptors), sem->descriptors.last, (ListItem*)semDesPtr);
 		PCB* ready_process = semDesPtr->descriptor->pcb;
 		List_detach(&waiting_list, (ListItem*)ready_process);
 		ready_process->status = Ready;
@@ -29,5 +32,5 @@ void internal_semPost(){
 	}
 	
 	running->syscall_retvalue = -1;
-	disastrOS_debug("[SEMPOST] sempost successfully completed. current count for sem_id=%d is %d",semDes->semaphore->id,semDes->semaphore->count);
+	disastrOS_debug("[SEMPOST] sempost successfully completed. current count for sem_id=%d is %d\n",semDes->semaphore->id,semDes->semaphore->count);
 }
