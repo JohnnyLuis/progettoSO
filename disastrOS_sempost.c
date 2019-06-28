@@ -22,7 +22,6 @@ void internal_semPost(){
 	(sem->count)++;
 	
 	if (sem->count <= 0) {
-		SemDescriptorPtrList_print(&sem->waiting_descriptors);
 		SemDescriptorPtr* semDesPtr = (SemDescriptorPtr*) List_detach(&(sem->waiting_descriptors), (ListItem*)sem->waiting_descriptors.first);
 		List_insert(&(sem->descriptors), sem->descriptors.last, (ListItem*)semDesPtr);
 		PCB* ready_process = semDesPtr->descriptor->pcb;

@@ -26,7 +26,7 @@ void internal_semWait(){
 	  running->status = Waiting;
     List_insert(&waiting_list, waiting_list.last, (ListItem*)running); 
     SemDescriptorPtr* semDesPtr = (SemDescriptorPtr*)List_detach(&(sem->descriptors),(ListItem*)semDes->ptr); 
-    List_insert(&(sem->waiting_descriptors), sem->waiting_descriptors.last, (ListItem*)semDesPtr));
+    List_insert(&(sem->waiting_descriptors), sem->waiting_descriptors.last, (ListItem*)semDesPtr);
     running = (PCB*) List_detach(&ready_list,ready_list.first);
   }
   
