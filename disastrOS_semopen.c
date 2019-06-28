@@ -14,7 +14,7 @@ void internal_semOpen(){
   //id must be >=0
   if (id < 0) {
     disastrOS_debug("[SEMOPEN] id not valid\n");
-	  running->syscall_retvalue = -1;
+	  running->syscall_retvalue = DSOS_ESEMOPEN;
 	  return;
   }
   
@@ -22,14 +22,14 @@ void internal_semOpen(){
   //number of sem_descriptors per process must no exceed !
   if ((running->sem_descriptors.size)+1 > MAX_NUM_SEMDESCRIPTORS_PER_PROCESS) {
     disastrOS_debug("[SEMOPEN] MAX_NUM_SEMDESCRIPTORS_PER_PROCESS reached\n");
-	  running->syscall_retvalue = -1;
+	  running->syscall_retvalue = DSOS_ESEMOPEN;
 	  return;
   }
   
   //if a new semaphore is to be created, then the total number of exiting semaphores in the system must no exceed !
   if ((mode && DSOS_CREATE) && ((semaphores_list.size)+1 > MAX_NUM_SEMAPHORES)) {
     disastrOS_debug("[SEMOPEN] MAX_NUM_SEMAPHORES reached\n");
-	  running->syscall_retvalue = -1;
+	  running->syscall_retvalue = DSOS_ESEMOPEN;
 	  return;
   }
 
@@ -40,7 +40,7 @@ void internal_semOpen(){
   if (mode && DSOS_CREATE) {
 	if (res) {
     disastrOS_debug("[SEMOPEN] semaphore with id=%d already exists. you can open it by using mode=0\n",id);
-		running->syscall_retvalue = -1;
+		running->syscall_retvalue = DSOS_ESEMOPEN;
 		return;
 	}
 	res = Semaphore_alloc(id,count);
@@ -50,7 +50,7 @@ void internal_semOpen(){
   }
   else if (!res) {
     disastrOS_debug("[SEMOPEN] semaphore with id=%d doesn't exists. you must create it before by using mode=DSOS_CREATE\n",id);
-	  running->syscall_retvalue = -1;
+	  running->syscall_retvalue = DSOS_ESEMOPEN;
 	  return;
   }
   
