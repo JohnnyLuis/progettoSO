@@ -29,14 +29,33 @@ void internal_semWait(){
     //current running process is blocked and so it is put between the processes in the waiting list 
 	  running->status = Waiting;
     List_insert(&waiting_list, waiting_list.last, (ListItem*)running); 
+    /*disastrOS_debug("[SEMWAIT] current waiting list:\n");
+    PCBList_print(&waiting_list);
+    disastrOS_debug("\n");*/
     
     //the descriptor pointer associated to the descriptor, that identifies the process, is removed from the descriptors list of the semaphore and then it is inserted
     //into the waiting descriptors list
     SemDescriptorPtr* semDesPtr = (SemDescriptorPtr*)List_detach(&(sem->descriptors),(ListItem*)semDes->ptr); 
     List_insert(&(sem->waiting_descriptors), sem->waiting_descriptors.last, (ListItem*)semDesPtr);
+    disastrOS_debug("[SEMWAIT] current waiting list of sem_id=%d:\n",sem->id);
+    SemDescriptorPtrList_print(&(sem->waiting_descriptors));
+    disastrOS_debug("\n");
+    
+    disastrOS_debug("\n[SEMWAIT] current ready list:\n");
+    PCBList_print(&ready_list);
+    disastrOS_debug("\n");
     
     //since the current running has been blocked, the new running process is the next one in ready queue (ready_list)
     running = (PCB*) List_detach(&ready_list,ready_list.first);
+    
+    if (!running) {
+      disastrOS_debug("[SEMWAIT] no ready processes available to run\n");
+	    running->syscall_retvalue = DSOS_ESEMWAIT;
+	    return;
+    }
+    
+   
+    
   }
   
   running->syscall_retvalue = 0;
